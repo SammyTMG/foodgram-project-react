@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import (IntegerField,
@@ -8,7 +10,6 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from users.serializers import CustomUserSerializer
-from users.models import Follow
 from .models import (Tag, Ingredient, Favourite,
                      IngredientsInRecipe, Recipe,
                      ShoppingCart)
@@ -77,7 +78,7 @@ class ReadRecipeSerializer(ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        if not request or (request.user and request.user.is_anonymous):
             return False
         return (ShoppingCart.objects.filter(user=request.user, recipe=obj)
                 .exists())
@@ -144,6 +145,7 @@ class CreateRecipeSerializer(ModelSerializer):
                 ingredient=ingredient, recipe=recipe, amount=i['amount']
             )
 
+    @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -152,6 +154,7 @@ class CreateRecipeSerializer(ModelSerializer):
         self.create_ingredients(ingredients, recipe)
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags')
         instance.tags.clear()
@@ -207,7 +210,7 @@ class FollowSerializer(CustomUserSerializer):
     def validate(self, data):
         author = self.instance
         user = self.context.get('request').user
-        if Follow.objects.filter(author=author, user=user).exists():
+        if user.follower.filter(author=author).exists():
             raise ValidationError(
                 'Вы уже подписаны на этого пользователя!')
         if user == author:
@@ -216,7 +219,8 @@ class FollowSerializer(CustomUserSerializer):
         return data
 
     def get_recipes_count(self, obj):
-        return obj.recipes.count()
+        amount = (obj.recipes.aggregate(count=Count('id')))
+        return amount['count']
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -244,7 +248,7 @@ class FavouriteSerializer(ModelSerializer):
     def validate(self, obj):
         recipe = self.instance
         user = self.context['request'].user
-        if Favourite.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.favorites.filter(user=user).exists():
             raise ValidationError('Рецепт уже добавлен в избранное.')
         return obj
 
@@ -265,6 +269,6 @@ class ShoppingCartSerializer(ModelSerializer):
     def validate(self, obj):
         recipe = self.instance
         user = self.context['request'].user
-        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.shopping_cart.filter(user=user).exists():
             raise ValidationError('Рецепт уже добавлен в корзину.')
         return obj

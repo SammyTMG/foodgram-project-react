@@ -60,39 +60,53 @@ class RecipeViewSet(ModelViewSet):
             return ReadRecipeSerializer
         return CreateRecipeSerializer
 
-    @action(detail=True, methods=['post', 'delete'],
+    @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
-        if request.method == 'POST':
-            serializer = FavouriteSerializer(recipe, data=request.data,
-                                             context={'request': request})
-            serializer.is_valid(raise_exception=True)
-            Favourite.objects.create(user=user, recipe=recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            get_object_or_404(Favourite, user=user,
-                              recipe=recipe).delete()
-            return Response('Рецепт удален из избранного.',
-                            status=status.HTTP_204_NO_CONTENT)
+        serializer = FavouriteSerializer(recipe, data=request.data,
+                                         context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        Favourite.objects.create(user=user, recipe=recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['post', 'delete'],
+    @favorite.mapping.delete
+    def del_favorite(self, request, **kwargs):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, **kwargs)
+        get_object_or_404(Favourite, user=user,
+                          recipe=recipe).delete()
+        response_data = {'message': 'Рецепт удален из корзины.',
+                         'deleted_recipe': {'id': recipe.id,
+                                            'name': recipe.name,
+                                            'author': user.username}}
+        return Response(response_data,
+                        status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
-        if request.method == 'POST':
-            serializer = ShoppingCartSerializer(recipe, data=request.data,
-                                                context={'request': request})
-            serializer.is_valid(raise_exception=True)
-            ShoppingCart.objects.create(user=user, recipe=recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            get_object_or_404(ShoppingCart, user=user,
-                              recipe=recipe).delete()
-            return Response('Рецепт удален из корзины.',
-                            status=status.HTTP_204_NO_CONTENT)
+        serializer = ShoppingCartSerializer(recipe, data=request.data,
+                                            context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        ShoppingCart.objects.create(user=user, recipe=recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @shopping_cart.mapping.delete
+    def del_shopping_cart(self, request, **kwargs):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, **kwargs)
+        get_object_or_404(ShoppingCart, user=user,
+                          recipe=recipe).delete()
+        response_data = {'message': 'Рецепт удален из корзины.',
+                         'deleted_recipe': {'id': recipe.id,
+                                            'name': recipe.name,
+                                            'author': user.username}}
+        return Response(response_data,
+                        status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
