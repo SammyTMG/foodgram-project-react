@@ -38,10 +38,9 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для ингредиентов.'''
     permission_classes = (IsAdminOrReadOnly,)
     queryset = Ingredient.objects.all()
-    pagination_class = LimitPageNumberPagination
     serializer_class = IngredientSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = IngredientFilter
+    filter_backends = (IngredientFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(ModelViewSet):
@@ -113,7 +112,7 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         buffer = io.BytesIO()
         page = canvas.Canvas(buffer)
-        pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
+        pdfmetrics.registerFont(TTFont('arial', 'fronts/arial.ttf'))
         user = request.user
         if not user.shopping_cart.exists():
             return Response('Корзина пуста',
@@ -125,7 +124,7 @@ class RecipeViewSet(ModelViewSet):
         shopping_cart = user.shopping_cart.select_related('recipe').values(
             ingredient_name, ingredient_unit
         ).annotate(Sum(recipe_amount)).order_by(ingredient_name)
-        page.setFont('Arial', 14)
+        page.setFont('arial', 14)
         x_position, y_position = 50, 800
         if shopping_cart:
             page.drawString(x_position, y_position, 'Cписок покупок:')

@@ -107,7 +107,14 @@ class CreateRecipeSerializer(ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = ('id',
+                  'tags',
+                  'author',
+                  'ingredients',
+                  'name',
+                  'image',
+                  'text',
+                  'cooking_time')
 
     def validate_ingredients(self, value):
         ingredients = value
@@ -139,10 +146,11 @@ class CreateRecipeSerializer(ModelSerializer):
         return value
 
     def create_ingredients(self, ingredients, recipe):
-        for i in ingredients:
-            ingredient = Ingredient.objects.get(id=i['id'])
+        for ingredient in ingredients:
             IngredientsInRecipe.objects.create(
-                ingredient=ingredient, recipe=recipe, amount=i['amount']
+                recipe=recipe,
+                ingredient_id=ingredient.get('id'),
+                amount=ingredient.get('amount'),
             )
 
     @transaction.atomic

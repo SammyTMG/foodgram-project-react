@@ -14,6 +14,7 @@ DEBUG = os.getenv('DEBUG', default=True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='*').split(' ')
 
+CSRF_TRUSTED_ORIGINS = ['http://*.mydomain.com', 'http://*.127.0.0.1', 'http://158.160.104.16']
 
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
@@ -132,4 +133,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.mydomain.com', 'https://*.127.0.0.1', 'https://158.160.104.16']
