@@ -1,18 +1,17 @@
-from django.shortcuts import get_object_or_404
-from django.db.models import Count
 from django.db import transaction
+from django.db.models import Count
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import (IntegerField,
-                                   SerializerMethodField,
-                                   ReadOnlyField)
+from rest_framework.fields import (IntegerField, ReadOnlyField,
+                                   SerializerMethodField)
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from users.serializers import CustomUserSerializer
-from .models import (Tag, Ingredient, Favourite,
-                     IngredientsInRecipe, Recipe,
-                     ShoppingCart)
+
+from .models import (Favourite, Ingredient, IngredientsInRecipe, Recipe,
+                     ShoppingCart, Tag)
 
 
 class TagSerializer(ModelSerializer):

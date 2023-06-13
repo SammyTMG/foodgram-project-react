@@ -1,30 +1,25 @@
 import io
+
+from django.db.models.aggregates import Sum
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models.aggregates import Sum
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-
-from django.http import FileResponse
-
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import (Tag, Ingredient, Recipe, Favourite,
-                     ShoppingCart)
-from .serializers import (TagSerializer,
-                          IngredientSerializer,
-                          ReadRecipeSerializer,
-                          CreateRecipeSerializer,
-                          FavouriteSerializer,
-                          ShoppingCartSerializer)
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from .models import Favourite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import LimitPageNumberPagination
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from .serializers import (CreateRecipeSerializer, FavouriteSerializer,
+                          IngredientSerializer, ReadRecipeSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
