@@ -131,7 +131,7 @@ class CreateRecipeSerializer(ModelSerializer):
             ingredients_list.append(ingredient)
             if int(i['amount']) <= 0:
                 raise ValidationError({
-                    'ingredients': 'Количество ингредиента не может быть меньше 1!'
+                    'ingredients': 'Количество не может быть меньше 1!'
                 })
         tags = data['tags']
         if not tags:
