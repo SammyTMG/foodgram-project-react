@@ -163,6 +163,7 @@ class CreateRecipeSerializer(ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
         tags = validated_data.pop('tags')
         instance.tags.clear()
         IngredientsInRecipe.objects.filter(recipe=instance).all().delete()
