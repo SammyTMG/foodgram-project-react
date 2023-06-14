@@ -129,4 +129,4 @@ sudo docker-compose exec backend python manage.py collectstatic --no-input
 sudo docker-compose exec backend python manage.py load_ingredients
 ```
 
-- Теперь проект доступен по вашему IP! Удачи!
+- Теперь проект доступен по вашему IP! Удачи и приятного аппетита!
