@@ -118,36 +118,32 @@ class CreateRecipeSerializer(ModelSerializer):
     def validate(self, data):
         ingredients = data['ingredients']
         if not ingredients:
-            raise ValidationError({
-                'ingredients': 'Должен присутствовать хотя бы один ингредиент!'
-            })
+            raise ValidationError(
+                'Должен присутствовать хотя бы один ингредиент!')
         ingredients_list = []
         for i in ingredients:
             ingredient = get_object_or_404(Ingredient, id=i['id'])
             if ingredient in ingredients_list:
-                raise ValidationError({
-                    'ingredients': 'Ингредиенты должны быть уникальными!'
-                })
+                raise ValidationError(
+                    'Ингредиенты должны быть уникальными!')
             ingredients_list.append(ingredient)
             if int(i['amount']) <= 0:
-                raise ValidationError({
-                    'ingredients': 'Количество не может быть меньше 1!'
-                })
+                raise ValidationError(
+                    'Количество не может быть меньше 1!')
         tags = data['tags']
         if not tags:
-            raise ValidationError({
-                'tags': 'Нужен хотя бы один тэг для рецепта!'})
+            raise ValidationError(
+                'Нужен хотя бы один тэг для рецепта!')
         tags_list = []
         for tag in tags:
             if tag in tags_list:
-                raise ValidationError({
-                    'tags': 'Теги должны быть уникальными!'})
+                raise ValidationError(
+                    'Теги должны быть уникальными!')
             tags_list.append(tag)
         cooking_time = data['cooking_time']
         if cooking_time <= 0:
-            raise ValidationError({
-                'cooking_time': 'Приготовление не может быть меньше 1 минуты!'
-            })
+            raise ValidationError(
+                'Приготовление не может быть меньше 1 минуты!')
         return data
 
     def create_ingredients(self, ingredients, recipe):
