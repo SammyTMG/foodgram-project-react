@@ -9,7 +9,7 @@ from api.pagination import LimitPageNumberPagination
 from api.serializers import FollowSerializer
 
 from .models import Follow, User
-from .serializers import CustomUserSerializer
+from .serializers import CreateUserSerializer, CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
@@ -20,8 +20,13 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return User.objects.all()
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CustomUserSerializer
+        return CreateUserSerializer
+
     @action(detail=True, methods=['POST', 'DELETE'],
-            permission_classes=[IsAuthenticated, ])
+            permission_classes=(IsAuthenticated,))
     def subscribe(self, request, **kwargs):
         user = request.user
         author_id = self.kwargs.get('id')
@@ -42,7 +47,7 @@ class CustomUserViewSet(UserViewSet):
                                               'username': author.username}}
             return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, permission_classes=[IsAuthenticated, ])
+    @action(detail=False, permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
