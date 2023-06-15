@@ -10,8 +10,7 @@ from rest_framework.serializers import ModelSerializer
 
 from users.serializers import CustomUserSerializer
 
-from .models import (Favourite, Ingredient, IngredientsInRecipe, Recipe,
-                     ShoppingCart, Tag)
+from .models import Ingredient, IngredientsInRecipe, Recipe, Tag
 
 
 class TagSerializer(ModelSerializer):
@@ -69,14 +68,14 @@ class ReadRecipeSerializer(ModelSerializer):
         return IngredientsInRecipeSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
         return user.favourite.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if not request or (request.user and request.user.is_anonymous):
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
         return user.shopping_cart.filter(recipe=obj).exists()
 
@@ -145,7 +144,7 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
-        ingredients_recipe =  []
+        ingredients_recipe = []
         for ingredient in ingredients:
             ingredients_recipe.append(
                 recipe=recipe,
