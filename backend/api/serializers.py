@@ -72,15 +72,13 @@ class ReadRecipeSerializer(ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return (Favourite.objects.filter(user=request.user, recipe=obj)
-                .exists())
+        return user.favourite.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or (request.user and request.user.is_anonymous):
             return False
-        return (ShoppingCart.objects.filter(user=request.user, recipe=obj)
-                .exists())
+        return user.shopping_cart.filter(recipe=obj).exists()
 
 
 class AddIngredientInRecipeSerializer(ModelSerializer):
@@ -116,7 +114,7 @@ class CreateRecipeSerializer(ModelSerializer):
                   'cooking_time')
 
     def validate(self, data):
-        ingredients = data['ingredients']
+        ingredients = data.get('ingredients')
         if not ingredients:
             raise ValidationError(
                 'Должен присутствовать хотя бы один ингредиент!')
@@ -147,12 +145,14 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
+        ingredients_recipe =  []
         for ingredient in ingredients:
-            IngredientsInRecipe.objects.create(
+            ingredients_recipe.append(
                 recipe=recipe,
                 ingredient_id=ingredient.get('id'),
                 amount=ingredient.get('amount'),
             )
+        IngredientsInRecipe.objects.bulk_create(ingredients_recipe)
 
     @transaction.atomic
     def create(self, validated_data):
