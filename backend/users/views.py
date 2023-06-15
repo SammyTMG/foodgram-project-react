@@ -21,7 +21,7 @@ class CustomUserViewSet(UserViewSet):
         return User.objects.all()
 
     @action(detail=True, methods=['POST', 'DELETE'],
-    permission_classes=[IsAuthenticated, ])
+            permission_classes=[IsAuthenticated, ])
     def subscribe(self, request, **kwargs):
         user = request.user
         author_id = self.kwargs.get('id')
