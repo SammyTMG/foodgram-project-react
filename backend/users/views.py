@@ -20,11 +20,6 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return User.objects.all()
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return CustomUserSerializer
-        return CreateUserSerializer
-
     @action(detail=True, methods=['POST', 'DELETE'],
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, **kwargs):
