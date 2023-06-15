@@ -70,15 +70,11 @@ class ReadRecipeSerializer(ModelSerializer):
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         user = request.user
-        if not request or request.user.is_anonymous:
-            return False
         return user.favorites.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         user = request.user
-        if not request or (request.user and request.user.is_anonymous):
-            return False
         return user.shopping_cart.filter(recipe=obj).exists()
 
 
@@ -114,7 +110,7 @@ class CreateRecipeSerializer(ModelSerializer):
                   'text',
                   'cooking_time')
 
-    def validate(self, data):
+    def validate_ingredients(self, data):
         ingredients = data.get('ingredients')
         if not ingredients:
             raise ValidationError(
@@ -129,7 +125,10 @@ class CreateRecipeSerializer(ModelSerializer):
             if int(i['amount']) <= 0:
                 raise ValidationError(
                     'Количество не может быть меньше 1!')
-        tags = data['tags']
+        return data
+
+    def validate_tags(self, data):
+        tags = data.get('tags')
         if not tags:
             raise ValidationError(
                 'Нужен хотя бы один тэг для рецепта!')
@@ -139,6 +138,9 @@ class CreateRecipeSerializer(ModelSerializer):
                 raise ValidationError(
                     'Теги должны быть уникальными!')
             tags_list.append(tag)
+        return data
+
+    def validate_cooking_time(self, data):
         cooking_time = data['cooking_time']
         if cooking_time <= 0:
             raise ValidationError(
