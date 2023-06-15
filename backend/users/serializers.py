@@ -1,7 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from .models import Follow, User
+from .models import User
 
 
 class CreateUserSerializer(UserCreateSerializer):

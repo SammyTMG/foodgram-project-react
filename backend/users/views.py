@@ -9,7 +9,7 @@ from api.pagination import LimitPageNumberPagination
 from api.serializers import FollowSerializer
 
 from .models import Follow, User
-from .serializers import CreateUserSerializer, CustomUserSerializer
+from .serializers import CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
