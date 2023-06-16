@@ -29,7 +29,7 @@ class CreateUserSerializer(UserCreateSerializer):
 
 class CustomUserSerializer(UserSerializer):
     '''Сериализатор показа пользователей'''
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.BooleanField(default=False)
 
     class Meta:
         model = User
@@ -39,8 +39,3 @@ class CustomUserSerializer(UserSerializer):
                   'first_name',
                   'last_name',
                   'is_subscribed',)
-
-    def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        return Follow.objects.filter(user=request.user,
-                                     author=obj).exists()

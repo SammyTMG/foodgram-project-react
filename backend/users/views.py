@@ -1,4 +1,3 @@
-from django.db.models import Exists, OuterRef
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -18,13 +17,6 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     pagination_class = LimitPageNumberPagination
     permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        user = get_object_or_404(User, id=self.request.user.id)
-        is_subscribed = Follow.objects.filter(user=user, author=OuterRef('id'))
-        return User.objects.annotate(
-            is_subscribed=Exists(is_subscribed)
-        )
 
     @action(detail=True, methods=['POST', 'DELETE'],
             permission_classes=(IsAuthenticated,))
