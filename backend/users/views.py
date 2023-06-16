@@ -3,26 +3,25 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import (DjangoModelPermissions,
-                                        IsAuthenticated)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.serializers import FollowSerializer
 
 from .models import Follow, User
+from .serializers import (CustomUserSerializer,
+                          CreateUserSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
     '''Вьюсет для юзеров и подписок. '''
     queryset = User.objects.all()
-    permission_classes = (DjangoModelPermissions, )
+    permission_classes = (IsAuthenticated, )
 
-    def get_queryset(self):
-        user = get_object_or_404(User, id=self.request.user.id)
-        is_subscribed = Follow.objects.filter(user=user, author=OuterRef('id'))
-        return User.objects.annotate(
-            is_subscribed=Exists(is_subscribed)
-        )
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateUserSerializer
+        return CustomUserSerializer
 
     @action(detail=True, methods=['POST', 'DELETE'],
             permission_classes=(IsAuthenticated,))
