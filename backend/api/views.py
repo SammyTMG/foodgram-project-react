@@ -80,19 +80,21 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, **kwargs):
+    def shopping_cart(self, request, pk):
         user = self.request.user
-        recipe = get_object_or_404(Recipe, **kwargs)
-        serializer = ShoppingCartSerializer(recipe, data=request.data,
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = ShoppingCartSerializer(recipe,
+                                            data={'user': request.user.id,
+                                                  'recipe': recipe.id},
                                             context={'request': request})
         serializer.is_valid(raise_exception=True)
         ShoppingCart.objects.create(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
-    def del_shopping_cart(self, request, **kwargs):
+    def del_shopping_cart(self, request, pk):
         user = self.request.user
-        recipe = get_object_or_404(Recipe, **kwargs)
+        recipe = get_object_or_404(Recipe, id=pk)
         ShoppingCart.objects.get(user=user,
                                  recipe=recipe,).delete()
         response_data = {'message': 'Рецепт удален из корзины.',
