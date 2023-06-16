@@ -287,4 +287,3 @@ class ShoppingCartSerializer(ModelSerializer):
         if recipe.shopping_cart.filter(user=user).exists():
             raise ValidationError('Рецепт уже добавлен в корзину.')
         return obj
-
