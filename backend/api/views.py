@@ -97,7 +97,11 @@ class RecipeViewSet(ModelViewSet):
         recipe = get_object_or_404(Recipe, id=pk)
         ShoppingCart.objects.get(user=user,
                                  recipe=recipe,).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        response_data = {'message': 'Рецепт удален из корзины.',
+                         'deleted_recipe': {'name': recipe.name,
+                                            'author': user}}
+        return Response(response_data,
+                        status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
