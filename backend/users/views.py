@@ -31,13 +31,11 @@ class CustomUserViewSet(UserViewSet):
         if request.method == 'POST':
             serializer = FollowSerializer(author, data=request.data,
                                           context={'request': request})
-            if serializer.is_valid():
-                follow = Follow.objects.create(user=user, author=author)
-                follow.save()
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
+            follow = Follow.objects.create(user=user, author=author)
+            follow.save()
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             subscription = get_object_or_404(Follow, user=user, author=author)
             subscription.delete()
@@ -46,7 +44,7 @@ class CustomUserViewSet(UserViewSet):
                                               'username': author.username}}
             return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=('GET',),
+    @action(detail=False, methods=['GET'],
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request, *args, **kwargs):
         user = request.user
