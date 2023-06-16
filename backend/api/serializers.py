@@ -9,7 +9,8 @@ from rest_framework.serializers import ModelSerializer
 
 from users.serializers import CustomUserSerializer
 
-from .models import Ingredient, IngredientsInRecipe, Recipe, Tag
+from .models import (Ingredient, IngredientsInRecipe, Recipe, Tag,)
+                     ShoppingCart
 
 
 class TagSerializer(ModelSerializer):
@@ -73,7 +74,8 @@ class ReadRecipeSerializer(ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user.id
-        return user.shopping_cart.filter(recipe=obj.id).exists()
+        return Recipe.objects.filter(shopping_cart__user=user,
+                                     id=obj.id).exists()
 
 
 class AddIngredientInRecipeSerializer(ModelSerializer):
