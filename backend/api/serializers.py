@@ -121,8 +121,8 @@ class CreateRecipeSerializer(ModelSerializer):
             ingredient = get_object_or_404(Ingredient,
                                            id=item['id'])
             if ingredient in ingredients_list:
-                raise ValidationError('Ингридиенты должны '
-                                                  'быть уникальными.')
+                raise ValidationError(
+                    'Ингредиенты должны быть уникальными!')
             ingredients_list.append(ingredient)
             if int(item['amount']) <= 0:
                 raise ValidationError({
