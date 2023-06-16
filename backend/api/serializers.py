@@ -128,7 +128,7 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def validate_tags(self, data):
-        tags = data.get('tags')
+        tags = data['tags']
         if not tags:
             raise ValidationError(
                 'Нужен хотя бы один тэг для рецепта!')
@@ -154,7 +154,7 @@ class CreateRecipeSerializer(ModelSerializer):
                 IngredientsInRecipe(recipe=recipe,
                                     ingredient_id=ingredient.get('id'),
                                     amount=ingredient.get('amount')))
-        IngredientsInRecipe.objects.bulk_create(recipe_ingredients)
+        IngredientsInRecipe.objects.bulk_create(ingredients_recipe)
 
     @transaction.atomic
     def create(self, validated_data):
