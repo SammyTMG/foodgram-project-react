@@ -91,8 +91,7 @@ class RecipeViewSet(ModelViewSet):
         ShoppingCart.objects.create(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'],
-            permission_classes=(IsAuthenticated,))
+    @shopping_cart.mapping.delete
     def del_shopping_cart(self, request, pk):
         shopping_cart = ShoppingCart.objects.filter(
             user_id=request.user.id,
