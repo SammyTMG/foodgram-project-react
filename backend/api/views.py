@@ -95,11 +95,15 @@ class RecipeViewSet(ModelViewSet):
     def del_shopping_cart(self, request, pk):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
+        serializer = ShoppingCartSerializer(recipe,
+                                            data={'user': request.user.id,
+                                                  'recipe': recipe.id},
+                                            context={'request': request})
         shoppingcart = get_object_or_404(ShoppingCart,
                                          user=user,
                                          recipe=recipe)
         shoppingcart.delete()
-        return Response('Рецепт удален из корзины.',
+        return Response(serializer.data,
                         status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
