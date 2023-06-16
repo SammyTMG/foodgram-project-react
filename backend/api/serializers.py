@@ -128,10 +128,16 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def validate_tags(self, data):
-        tags = data['tags']
-        if not tags:
-            raise ValidationError(
-                'Нужен хотя бы один тэг для рецепта!')
+        for tag in data:
+            if not tags:
+                raise ValidationError(
+                    'Нужен хотя бы один тэг для рецепта!')
+        tags_list = []
+        for tag in tags:
+            if tag in tags_list:
+                raise ValidationError(
+                    'Теги должны быть уникальными!')
+            tags_list.append(tag)
         return data
 
     def validate_cooking_time(self, data):
