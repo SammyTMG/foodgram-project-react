@@ -98,8 +98,7 @@ class RecipeViewSet(ModelViewSet):
             user_id=request.user.id,
             recipe_id=recipe.id)
         shopping_cart.delete()
-        return Response('Рецепт удален из корзины.',
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
