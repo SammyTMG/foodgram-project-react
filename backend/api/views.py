@@ -96,8 +96,8 @@ class RecipeViewSet(ModelViewSet):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
         shopping_cart = get_object_or_404(ShoppingCart,
-                                         user=user,
-                                         recipe=recipe)
+                                          user=user,
+                                          recipe=recipe)
         self.perform_destroy(shopping_cart)
         return Response(
             f'Рецепт {recipe} удален из списка покупок.',
