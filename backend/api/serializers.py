@@ -11,6 +11,7 @@ from users.serializers import CustomUserSerializer
 
 from .models import Ingredient, IngredientsInRecipe, Recipe, Tag
 
+
 class TagSerializer(ModelSerializer):
     '''Сериализатор показа Тегов.'''
     class Meta:
