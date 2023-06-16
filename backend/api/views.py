@@ -46,13 +46,13 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ReadRecipeSerializer
         return CreateRecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
@@ -60,8 +60,8 @@ class RecipeViewSet(ModelViewSet):
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart'
         )
-        favorite = Favoгrite.objects.filter(user=self.request.user.id)
-        shopping_cart = ShoppingСart.objects.filter(user=self.request.user.id)
+        favorite = Favourite.objects.filter(user=self.request.user.id)
+        shopping_cart = ShoppingCart.objects.filter(user=self.request.user.id)
         if is_favorited == 'true':
             queryset = queryset.filter(favorites__in=favorite)
         elif is_favorited == 'false':
