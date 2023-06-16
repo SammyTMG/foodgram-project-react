@@ -112,7 +112,7 @@ class CreateRecipeSerializer(ModelSerializer):
                   'cooking_time')
 
     def validate_ingredients(self, value):
-        if not value::
+        if not value:
             raise ValidationError(
                 'Должен присутствовать хотя бы один ингредиент!')
         ingredients_list = []
