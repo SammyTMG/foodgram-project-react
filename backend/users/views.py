@@ -32,7 +32,7 @@ class CustomUserViewSet(UserViewSet):
             serializer = FollowSerializer(author, data=request.data,
                                           context={'request': request})
             serializer.is_valid(raise_exception=True)
-            follow = Follow.objects.create(user=user, author=author)
+            Follow.objects.create(user=user, author=author)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
