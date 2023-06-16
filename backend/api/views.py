@@ -93,11 +93,12 @@ class RecipeViewSet(ModelViewSet):
 
     @shopping_cart.mapping.delete
     def del_shopping_cart(self, request, pk):
-        shopping_cart = ShoppingCart.objects.filter(
-            user_id=request.user.id,
-            recipe__id=pk)
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        get_object_or_404(ShoppingCart, user=user, 
+                          recipe=recipe).delete()
         shopping_cart.delete()
-        return Response('Рецепт удален',
+        return Response(f'Рецепт {recipe.id} удален',
                         status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
