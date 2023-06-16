@@ -151,9 +151,11 @@ class CreateRecipeSerializer(ModelSerializer):
         ingredients_recipe = []
         for ingredient in ingredients:
             ingredients_recipe.append(
-                recipe=recipe,
-                ingredient_id=ingredient.get('id'),
-                amount=ingredient.get('amount'),
+                IngredientsInRecipe(
+                    recipe=recipe,
+                    ingredient_id=ingredient.get('id'),
+                    amount=ingredient.get('amount'),
+                )
             )
         IngredientsInRecipe.objects.bulk_create(ingredients_recipe)
 
@@ -285,3 +287,4 @@ class ShoppingCartSerializer(ModelSerializer):
         if recipe.shopping_cart.filter(user=user).exists():
             raise ValidationError('Рецепт уже добавлен в корзину.')
         return obj
+
