@@ -16,7 +16,6 @@ class CustomUserViewSet(UserViewSet):
     '''Вьюсет для юзеров и подписок. '''
     serializer_class = CustomUserSerializer
     pagination_class = LimitPageNumberPagination
-    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return User.objects.all()
