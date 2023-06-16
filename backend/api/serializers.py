@@ -9,9 +9,8 @@ from rest_framework.serializers import ModelSerializer
 
 from users.serializers import CustomUserSerializer
 
-from .models import (Favourite, Ingredient, IngredientsInRecipe,
-                     Recipe, Tag)
-
+from .models import (Favourite, Ingredient, IngredientsInRecipe,mRecipe,
+                     Tag)
 
 class TagSerializer(ModelSerializer):
     '''Сериализатор показа Тегов.'''
