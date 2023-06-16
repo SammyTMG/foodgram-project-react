@@ -95,7 +95,7 @@ class CreateRecipeSerializer(ModelSerializer):
     tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                   many=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = AddIngredientInRecipeSerializer(source='ingredient',
+    ingredients = AddIngredientInRecipeSerializer(sourse='recipe',
                                                   many=True)
     image = Base64ImageField(max_length=None,
                              use_url=True)
@@ -112,7 +112,7 @@ class CreateRecipeSerializer(ModelSerializer):
                   'cooking_time')
 
     def validate_ingredients(self, data):
-        ingredients = self.initial_data.get('ingredient')
+        ingredients = data.get('recipe')
         if not ingredients:
             raise ValidationError(
                 'Должен присутствовать хотя бы один ингредиент!')
