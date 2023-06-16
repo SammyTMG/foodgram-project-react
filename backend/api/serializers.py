@@ -112,24 +112,21 @@ class CreateRecipeSerializer(ModelSerializer):
                   'cooking_time')
 
     def validate_ingredients(self, data):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data['ingredients'] 
         if not ingredients:
-            raise ValidationError({
-                'ingredients': 'Должен присутствовать хотя бы 1 ингредиент!'})
-        ingredients_list = []
-        for item in ingredients:
-            ingredient = get_object_or_404(Ingredient,
-                                           id=item['id'])
-            if ingredient in ingredients_list:
-                raise ValidationError(
-                    'Ингредиенты должны быть уникальными!')
-            ingredients_list.append(ingredient)
-            if int(item['amount']) <= 0:
-                raise ValidationError({
-                    'ingredients': ('Количество не может быть меньше 1.')
-                })
-        data['ingredients'] = ingredients
-        return data
+            raise ValidationError( 
+                'Должен присутствовать хотя бы один ингредиент!') 
+        ingredients_list = [] 
+        for i in ingredients: 
+            ingredient = get_object_or_404(Ingredient, id=i['id']) 
+            if ingredient in ingredients_list: 
+                raise ValidationError( 
+                    'Ингредиенты должны быть уникальными!') 
+            ingredients_list.append(ingredient) 
+            if int(i['amount']) <= 0: 
+                raise ValidationError( 
+                    'Количество не может быть меньше 1!')
+            return data
 
     def validate_tags(self, data):
         tags_list = []
