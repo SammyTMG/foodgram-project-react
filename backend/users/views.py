@@ -5,22 +5,19 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.pagination import LimitPageNumberPagination
 from api.serializers import FollowSerializer
 
 from .models import Follow, User
-from .serializers import (CustomUserSerializer,
-                          CreateUserSerializer)
+from .serializers import CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
     '''Вьюсет для юзеров и подписок. '''
     queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    pagination_class = LimitPageNumberPagination
     permission_classes = (IsAuthenticated, )
-
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CreateUserSerializer
-        return CustomUserSerializer
 
     @action(detail=True, methods=['POST', 'DELETE'],
             permission_classes=(IsAuthenticated,))
