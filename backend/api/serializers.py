@@ -154,7 +154,7 @@ class CreateRecipeSerializer(ModelSerializer):
                 IngredientsInRecipe(recipe=recipe,
                                     ingredient_id=ingredient.get('id'),
                                     amount=ingredient.get('amount')))
-        IngredientsInRecipe.objects.bulk_create(ingredients_recipe)
+        IngredientsInRecipe.objects.bulk_create(recipe_ingredients)
 
     @transaction.atomic
     def create(self, validated_data):
