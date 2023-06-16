@@ -61,9 +61,9 @@ class RecipeViewSet(ModelViewSet):
         )
         user = self.request.user
         if is_in_shopping_cart == '1':
-            return Recipe.objects.filter(shopping_carts__user=user)
+            return Recipe.objects.filter(shopping_cart__user=user)
         if is_favorited == '1':
-            return Recipe.objects.filter(favorite__user=user)
+            return Recipe.objects.filter(favorites__user=user)
         return Recipe.objects.all()
 
     @action(detail=True, methods=['post'],
