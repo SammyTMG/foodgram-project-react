@@ -53,7 +53,7 @@ class RecipeViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         is_favorited = self.request.query_params.get('is_favorited')
