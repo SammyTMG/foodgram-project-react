@@ -94,8 +94,7 @@ class CreateRecipeSerializer(ModelSerializer):
     tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                   many=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = AddIngredientInRecipeSerializer(sourse='recipe',
-                                                  many=True)
+    ingredients = AddIngredientInRecipeSerializer(many=True)
     image = Base64ImageField(max_length=None,
                              use_url=True)
 
@@ -135,13 +134,6 @@ class CreateRecipeSerializer(ModelSerializer):
                 raise ValidationError(
                     'Теги должны быть уникальными!')
             tags_list.append(tag)
-        return data
-
-    def validate_cooking_time(self, data):
-        cooking_time = self.initial_data.get('cooking_time')
-        if cooking_time <= 0:
-            raise ValidationError(
-                'Приготовление не может быть меньше 1 минуты!')
         return data
 
     def create_ingredients(self, ingredients, recipe):
