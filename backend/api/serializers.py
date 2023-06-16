@@ -12,6 +12,7 @@ from users.serializers import CustomUserSerializer
 from .models import (Favourite, Ingredient, IngredientsInRecipe, Recipe,
                      Tag)
 
+
 class TagSerializer(ModelSerializer):
     '''Сериализатор показа Тегов.'''
     class Meta:
