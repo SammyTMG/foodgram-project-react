@@ -94,7 +94,6 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['delete'],
             permission_classes=(IsAuthenticated,))
     def del_shopping_cart(self, request, pk):
-        recipe = get_object_or_404(Recipe, id=pk)
         shopping_cart = ShoppingCart.objects.filter(
             user_id=request.user.id,
             recipe__id=pk)
