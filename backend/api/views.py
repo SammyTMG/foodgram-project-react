@@ -95,9 +95,8 @@ class RecipeViewSet(ModelViewSet):
     def del_shopping_cart(self, request, pk):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        get_object_or_404(ShoppingCart, user=user, 
+        get_object_or_404(ShoppingCart, user=user,
                           recipe=recipe).delete()
-        shopping_cart.delete()
         return Response(f'Рецепт {recipe.id} удален',
                         status=status.HTTP_204_NO_CONTENT)
 
