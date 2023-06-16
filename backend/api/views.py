@@ -93,8 +93,10 @@ class RecipeViewSet(ModelViewSet):
     def del_shopping_cart(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
-        get_object_or_404(ShoppingCart, user=user,
-                          recipe=recipe).delete()
+        Shopping_cart.objects.get(
+                user=user,
+                recipe=recipe,
+            ).delete()
         response_data = {'message': 'Рецепт удален из корзины.',
                          'deleted_recipe': {'id': recipe.id,
                                             'name': recipe.name,
