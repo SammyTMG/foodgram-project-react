@@ -72,9 +72,8 @@ class RecipeViewSet(ModelViewSet):
     def del_favorite(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
-        fav = get_object_or_404(Favourite, user=user,
-                                recipe=recipe)
-        .delete()
+        get_object_or_404(Favourite, user=user,
+                                recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'],
