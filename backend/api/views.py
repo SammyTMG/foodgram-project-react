@@ -78,7 +78,7 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, *args, **kwargs):
+    def shopping_cart(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
         serializer = ShoppingCartSerializer(recipe, data=request.data,
@@ -88,13 +88,12 @@ class RecipeViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
-    def del_shopping_cart(self, request, *args, **kwargs):
+    def del_shopping_cart(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
         get_object_or_404(ShoppingCart, user=user,
                           recipe=recipe).delete()
-        return Response('Recipe deleted from ShoppingCart',
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
