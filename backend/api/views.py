@@ -49,13 +49,13 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ReadRecipeSerializer
         return CreateRecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
@@ -72,13 +72,14 @@ class RecipeViewSet(ModelViewSet):
     def del_favorite(self, request, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
-        get_object_or_404(Favourite, user=user,
-                          recipe=recipe).delete()
+        fav = get_object_or_404(Favourite, user=user,
+                                recipe=recipe)
+        .delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, **kwargs):
+    def shopping_cart(self, request, *args, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
         serializer = ShoppingCartSerializer(recipe, data=request.data,
@@ -88,16 +89,12 @@ class RecipeViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
-    def del_shopping_cart(self, request, **kwargs):
+    def del_shopping_cart(self, request, *args, **kwargs):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
         get_object_or_404(ShoppingCart, user=user,
                           recipe=recipe).delete()
-        response_data = {'message': 'Рецепт удален из корзины.',
-                         'deleted_recipe': {'id': recipe.id,
-                                            'name': recipe.name,
-                                            'author': user.username}}
-        return Response(response_data,
+        return Response('Recipe deleted from ShoppingCart',
                         status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
