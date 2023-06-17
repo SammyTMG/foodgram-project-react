@@ -9,7 +9,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
@@ -40,7 +41,9 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов/избранное/корзина/скачивание корзины.'''
-    permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
+    permission_classes = [IsAuthorOrReadOnly,
+                          IsAdminOrReadOnly,
+                          IsAuthenticatedOrReadOnly]
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
@@ -71,12 +74,7 @@ class RecipeViewSet(ModelViewSet):
         recipe = get_object_or_404(Recipe, **kwargs)
         get_object_or_404(Favourite, user=user,
                           recipe=recipe).delete()
-        response_data = {'message': 'Рецепт удален из корзины.',
-                         'deleted_recipe': {'id': recipe.id,
-                                            'name': recipe.name,
-                                            'author': user.username}}
-        return Response(response_data,
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
@@ -97,8 +95,7 @@ class RecipeViewSet(ModelViewSet):
         recipe = get_object_or_404(Recipe, id=pk)
         get_object_or_404(ShoppingCart, user=user,
                           recipe=recipe).delete()
-        return Response('Рецепт удален',
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))

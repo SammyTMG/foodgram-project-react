@@ -35,10 +35,7 @@ class CustomUserViewSet(UserViewSet):
         if request.method == 'DELETE':
             subscription = get_object_or_404(Follow, user=user, author=author)
             subscription.delete()
-            response_data = {'message': 'Пользователь успешно удален.',
-                             'deleted_user': {'id': author.id,
-                                              'username': author.username}}
-            return Response(response_data, status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['GET'],
             permission_classes=(IsAuthenticated,))
