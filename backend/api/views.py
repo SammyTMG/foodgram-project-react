@@ -73,7 +73,7 @@ class RecipeViewSet(ModelViewSet):
         user = self.request.user
         recipe = get_object_or_404(Recipe, **kwargs)
         get_object_or_404(Favourite, user=user,
-                                recipe=recipe).delete()
+                          recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'],
