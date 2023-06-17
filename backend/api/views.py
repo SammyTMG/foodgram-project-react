@@ -42,8 +42,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов/избранное/корзина/скачивание корзины.'''
     permission_classes = [IsAuthorOrReadOnly,
-                          IsAdminOrReadOnly,
-                          IsAuthenticatedOrReadOnly]
+                          IsAdminOrReadOnly]
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
